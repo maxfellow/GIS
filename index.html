@@ -65,8 +65,8 @@ nav.bg{background:rgba(3,9,18,.88);backdrop-filter:blur(20px);-webkit-backdrop-f
   transition:transform .2s var(--ease),opacity .2s;
 }
 .n-cta:hover{transform:translateY(-2px);opacity:.9;}
-.ham{display:none;flex-direction:column;gap:5px;padding:8px;}
-.ham span{width:20px;height:1px;background:var(--w);border-radius:1px;transition:transform .3s var(--ease),opacity .2s;}
+.ham{display:none;flex-direction:column;gap:5px;padding:8px;background:transparent;border:none;outline:none;-webkit-appearance:none;appearance:none;}
+.ham span{width:20px;height:1.5px;background:rgba(220,235,255,.85);border-radius:1px;transition:transform .3s var(--ease),opacity .2s;}
 .ham.x span:nth-child(1){transform:translateY(6px) rotate(45deg);}
 .ham.x span:nth-child(2){opacity:0;}
 .ham.x span:nth-child(3){transform:translateY(-6px) rotate(-45deg);}
@@ -123,7 +123,7 @@ nav.bg{background:rgba(3,9,18,.88);backdrop-filter:blur(20px);-webkit-backdrop-f
    HOME
 ═══════════════════════ */
 .hero{
-  min-height:100vh;display:flex;flex-direction:column;justify-content:flex-end;
+  min-height:100vh;display:flex;flex-direction:column;justify-content:center;
   padding:0;position:relative;
 }
 .hero-fade{
@@ -133,7 +133,7 @@ nav.bg{background:rgba(3,9,18,.88);backdrop-filter:blur(20px);-webkit-backdrop-f
 }
 .hero-body{
   position:relative;z-index:1;
-  padding:0 48px 80px;
+  padding:200px 48px 100px;
   max-width:calc(var(--max) + 96px);width:100%;margin:0 auto;
 }
 .h-badge{
@@ -309,6 +309,7 @@ footer{background:var(--s1);border-top:1px solid var(--line);}
 /* RESPONSIVE */
 @media(max-width:900px){
   nav{padding:0 24px;}.n-links{display:none;}.ham{display:flex;}
+  .hero-body{padding:180px 24px 80px !important;}
   .hero-body,.sec,.page-hero,.grp-bar,.ast-row,.fnd-sec,.con-body,.ft-g,.ft-bot{padding-left:24px;padding-right:24px;}
   .two{grid-template-columns:1fr;gap:40px;}
   .four{grid-template-columns:1fr 1fr;}
@@ -668,7 +669,16 @@ orb.rotation.x=Math.PI/4;sc.add(orb);
 sc.add(new THREE.AmbientLight(0x1a3366,.7));
 const pl=new THREE.PointLight(0x4488ff,1.2,30);pl.position.set(5,3,5);sc.add(pl);
 
-globe.position.x=2.2;globe.rotation.y=-.5;
+function setGlobePos(){
+  const mob = window.innerWidth < 768;
+  globe.position.x = mob ? 0 : 2.2;
+  globe.position.z = mob ? 0 : 0;
+  if(mob) globe.scale.setScalar(.75);
+  else globe.scale.setScalar(1);
+}
+setGlobePos();
+globe.rotation.y=-.5;
+window.addEventListener('resize', setGlobePos);
 
 let sp=0,tsp=0;
 window.addEventListener('scroll',()=>{
@@ -685,7 +695,8 @@ window.addEventListener('scroll',()=>{
   orb.rotation.z+=.0007;
   globe.position.y=sp*5;
   globe.rotation.x=sp*.35;
-  globe.scale.setScalar(1-sp*.2);
+  const baseSc = window.innerWidth<768 ? .75 : 1;
+  globe.scale.setScalar(baseSc*(1-sp*.2));
   rdr.render(sc,cam);
 })();
 
